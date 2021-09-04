@@ -120,7 +120,7 @@ class _ChapterPageState extends State<ChapterPage> {
                                 getParagraph(index),
                                 style: TextStyle(
                                     fontSize: 18,
-                                    color: Colors.black,
+                                    color: Colors.black87,
                                     fontStyle: FontStyle.italic,
                                 ),
                               ),

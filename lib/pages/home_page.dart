@@ -1,9 +1,10 @@
 import 'package:fim_dos_tempos_weekly/Mocks/mocks.dart';
 import 'package:fim_dos_tempos_weekly/models/models.dart';
+import 'package:fim_dos_tempos_weekly/pages/informative_page.dart';
 import 'package:fim_dos_tempos_weekly/utils/datasource/firebase/FirebaseStore.dart';
 import 'package:flutter/material.dart';
 
-import 'act_page.dart';
+import 'arc_page.dart';
 
 class HomePage extends StatefulWidget {
 
@@ -17,14 +18,14 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
-  List<Act> acts = Mocks.database();
+  List<Arc> acts = Mocks.database();
 
   String getActTitle(int index) {
     return acts[index].name;
   }
 
   void presentAct(int index, BuildContext ctx) {
-    Act selectedAct = acts[index];
+    Arc selectedAct = acts[index];
     Navigator.of(ctx).push(
       PageRouteBuilder(
         transitionDuration: Duration(milliseconds: 350),
@@ -42,11 +43,26 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  void presentInformative(BuildContext ctx) {
+    PageRouteBuilder nextRoute =  PageRouteBuilder(
+      transitionDuration: Duration(milliseconds: 350),
+      reverseTransitionDuration: Duration(milliseconds: 250),
+      pageBuilder: (context, a, b)  {
+        return InformativePage(title: "Informações");
+      },
+      transitionsBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+        return FadeTransition(opacity: animation, child: child);
+      },
+    );
+
+    Navigator.push(ctx, nextRoute);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Act>>(
-      future: FirebaseManager.get(),
-      builder: (BuildContext ctx, AsyncSnapshot<List<Act>> snapshot) {
+    return FutureBuilder<List<Arc>>(
+      future: FirebaseManager.getArcs(),
+      builder: (BuildContext ctx, AsyncSnapshot<List<Arc>> snapshot) {
         if (snapshot.data != null) {
           acts = snapshot.data!;
         }
@@ -81,7 +97,7 @@ class _HomePageState extends State<HomePage> {
                                 getActTitle(index),
                                 style: TextStyle(
                                     fontSize: 24,
-                                    color: Colors.black,
+                                    color: Colors.black87,
                                     fontStyle: FontStyle.italic,
                                     decoration: TextDecoration.underline,
                                     fontWeight: FontWeight.bold,
@@ -96,10 +112,13 @@ class _HomePageState extends State<HomePage> {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(bottom: 30.0),
-                  child: Image.asset(
-                    "assets/images/tormenta-logo.png",
-                    height: 40,
-                    width: double.infinity,
+                  child: GestureDetector(
+                    onTap: () => presentInformative(context),
+                    child: Image.asset(
+                      "assets/images/tormenta-logo.png",
+                      height: 40,
+                      width: double.infinity,
+                    ),
                   ),
                 )
               ],

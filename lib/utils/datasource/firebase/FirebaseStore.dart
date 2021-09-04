@@ -21,12 +21,12 @@ class FirebaseManager {
     }
   }
 
-  static Future<List<Act>> get() async {
-    List<Act> acts = List<Act>.empty(growable: true);
+  static Future<List<Arc>> getArcs() async {
+    List<Arc> arcs = List<Arc>.empty(growable: true);
     await _database.once().then((snapshot) {
       final reference = Map<String, dynamic>.from(snapshot.value);
-      final actsList = reference["acts"];
-      actsList.forEach((actRef) {
+      final arcsList = reference["arcs"];
+      arcsList.forEach((actRef) {
         String name = actRef['name'];
         int index = actRef['index'];
 
@@ -52,10 +52,38 @@ class FirebaseManager {
           chapters.add(chapter);
         });
 
-        final act = Act(index, name, chapters);
-        acts.add(act);
+        final arc = Arc(index, name, chapters);
+        arcs.add(arc);
       });
     });
-    return acts;
+    return arcs;
   }
+
+  static Future<List<LinkPath>> getLinks() async {
+    List<LinkPath> links = List.empty(growable: true);
+    await _database.once().then((snapshot) {
+      final reference = Map<String, dynamic>.from(snapshot.value);
+      final linkList = reference["links"];
+      linkList.forEach((linkRef) {
+        String url = linkRef['url'];
+        String assetPath = linkRef['assetPath'];
+
+        links.add(LinkPath(assetPath, url));
+      });
+    });
+    return links;
+  }
+
+  static Future<List<String>> getInformations() async {
+    List<String> infos = List.empty(growable: true);
+    await _database.once().then((snapshot) {
+      final reference = Map<String, dynamic>.from(snapshot.value);
+      final infoList = reference["infos"];
+      infoList.forEach((info) {
+        infos.add(info);
+      });
+    });
+    return infos;
+  }
+
 }

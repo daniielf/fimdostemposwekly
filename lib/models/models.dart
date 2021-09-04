@@ -1,12 +1,12 @@
-class Act {
+class Arc {
 
   int index;
   String name;
   List<Chapter> chapters = List<Chapter>.empty(growable: true);
 
-  Act(this.index, this.name, this.chapters);
+  Arc(this.index, this.name, this.chapters);
 
-  Act.fromJson(Map<String, dynamic> json)
+  Arc.fromJson(Map<String, dynamic> json)
   : name = json['name'],
     index = json['index'],
     chapters = json['chapters'] ?? List<Chapter>.empty(growable: true);
@@ -38,4 +38,16 @@ class Paragraph {
   Paragraph.fromJson(Map<String, dynamic> json)
       : index = json['index'],
         text = json['text'];
+}
+
+class LinkPath {
+
+  String assetPath;
+  String url;
+
+  LinkPath(this.assetPath, this.url);
+
+  LinkPath.from(Map<String, String> json)
+    : assetPath = json['assetPath'] ?? "",
+      url = json['url'] ?? "";
 }

@@ -2,9 +2,9 @@ import 'package:fim_dos_tempos_weekly/models/models.dart';
 
 class Mocks {
 
-  static List<Act> database() {
-    var acts = List<Act>.empty(growable: true);
-    var act_1 = Act(0,
+  static List<Arc> database() {
+    var acts = List<Arc>.empty(growable: true);
+    var act_1 = Arc(0,
                     "Ato 1",
                     [
                       Chapter(0,
