@@ -1,6 +1,6 @@
 {
-    "name": "fim_dos_tempos_weekly",
-    "short_name": "fim_dos_tempos_weekly",
+    "name": "fimDosTemposWeekly",
+    "short_name": "fimDosTemposWeekly",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

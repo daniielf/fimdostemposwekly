@@ -1,4 +1,4 @@
-package com.example.fim_dos_tempos_weekly
+package com.daniielfdev.fimDosTemposWeekly
 
 import io.flutter.embedding.android.FlutterActivity
 

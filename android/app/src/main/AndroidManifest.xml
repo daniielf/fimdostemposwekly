@@ -1,7 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.fim_dos_tempos_weekly">
+    package="com.daniielfdev.fimDosTemposWeekly">
    <application
-        android:label="fim_dos_tempos_weekly"
+        android:label="FimDosTempos Weekly"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

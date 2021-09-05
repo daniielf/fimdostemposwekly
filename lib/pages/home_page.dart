@@ -1,7 +1,7 @@
-import 'package:fim_dos_tempos_weekly/Mocks/mocks.dart';
-import 'package:fim_dos_tempos_weekly/models/models.dart';
-import 'package:fim_dos_tempos_weekly/pages/informative_page.dart';
-import 'package:fim_dos_tempos_weekly/utils/datasource/firebase/FirebaseStore.dart';
+import 'package:fimDosTemposWeekly/Mocks/mocks.dart';
+import 'package:fimDosTemposWeekly/models/models.dart';
+import 'package:fimDosTemposWeekly/pages/informative_page.dart';
+import 'package:fimDosTemposWeekly/utils/datasource/firebase/FirebaseStore.dart';
 import 'package:flutter/material.dart';
 
 import 'arc_page.dart';
@@ -18,7 +18,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
-  List<Arc> acts = Mocks.database();
+  List<Arc> acts = [];
 
   String getActTitle(int index) {
     return acts[index].name;

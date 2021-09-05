@@ -1,6 +1,6 @@
-import 'package:fim_dos_tempos_weekly/colors/custom_colors.dart';
-import 'package:fim_dos_tempos_weekly/pages/home_page.dart';
-import 'package:fim_dos_tempos_weekly/utils/datasource/firebase/FirebaseStore.dart';
+import 'package:fimDosTemposWeekly/colors/custom_colors.dart';
+import 'package:fimDosTemposWeekly/pages/home_page.dart';
+import 'package:fimDosTemposWeekly/utils/datasource/firebase/FirebaseStore.dart';
 import 'package:flutter/material.dart';
 
 void main() async {

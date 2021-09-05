@@ -1,4 +1,4 @@
-import 'package:fim_dos_tempos_weekly/models/models.dart';
+import 'package:fimDosTemposWeekly/models/models.dart';
 
 class Mocks {
 

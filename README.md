@@ -1,4 +1,4 @@
-# fim_dos_tempos_weekly
+# fimDosTemposWeekly
 
 A new Flutter project.
 

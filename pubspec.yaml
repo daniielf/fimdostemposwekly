@@ -1,4 +1,4 @@
-name: fim_dos_tempos_weekly
+name: fimDosTemposWeekly
 description: A new Flutter project.
 
 # The following line prevents the package from being accidentally published to
@@ -61,4 +61,4 @@ flutter:
 
 flutter_native_splash:
   color: '#741920'
-  image: assets/images/tormenta-logo.png
+  image: assets/images/FimDosTemposWeekly.png
