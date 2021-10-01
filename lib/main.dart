@@ -1,16 +1,14 @@
 import 'package:fimDosTemposWeekly/colors/custom_colors.dart';
 import 'package:fimDosTemposWeekly/pages/home_page.dart';
 import 'package:fimDosTemposWeekly/utils/datasource/firebase/FirebaseStore.dart';
+import 'package:fimDosTemposWeekly/utils/notification/notofication_manager.dart';
 import 'package:flutter/material.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await FirebaseManager.start();
+  NotificationManager.requestPermission();
   runApp(MyApp());
-}
-
-void startFirebase() async {
-
 }
 
 class MyApp extends StatelessWidget {
@@ -23,6 +21,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: CustomColors.customRed,
       ),
       home: HomePage(title: 'Home'),
+      debugShowCheckedModeBanner: false,
     );
   }
 }

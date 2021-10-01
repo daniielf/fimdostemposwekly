@@ -18,12 +18,16 @@ class Chapter {
   String title;
   List<Paragraph> paragraphs;
   String videoUrl;
+  String releaseDate;
+  String duration;
 
-  Chapter(this.index, this.title, this.paragraphs,  this.videoUrl);
+  Chapter(this.index, this.title, this.paragraphs, this.videoUrl, this.duration, this.releaseDate);
 
   Chapter.fromJson(Map<String, dynamic> json)
       : index = json['index'],
         title = json['title'],
+        duration = json['duration'],
+        releaseDate = json['releaseDate'],
         paragraphs = json['paragraphs'],
         videoUrl = json['videoUrl'];
 }
@@ -50,4 +54,21 @@ class LinkPath {
   LinkPath.from(Map<String, String> json)
     : assetPath = json['assetPath'] ?? "",
       url = json['url'] ?? "";
+}
+
+class Character {
+
+  String name;
+  String iconUrl;
+  String avatarUrl;
+  String pageUrl;
+  String phrase;
+
+  Character(this.name, this.iconUrl, this.avatarUrl, this.pageUrl, this.phrase);
+  Character.from(Map<String, dynamic> json) :
+      name = json['name'],
+      iconUrl = json['iconUrl'],
+      avatarUrl = json['avatarUrl'],
+      pageUrl = json['pageUrl'],
+      phrase = json['phrase'];
 }

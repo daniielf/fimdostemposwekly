@@ -1,5 +1,6 @@
-import 'package:fimDosTemposWeekly/Mocks/mocks.dart';
 import 'package:fimDosTemposWeekly/models/models.dart';
+import 'package:fimDosTemposWeekly/pages/arc_list_page.dart';
+import 'package:fimDosTemposWeekly/pages/character_list_page.dart';
 import 'package:fimDosTemposWeekly/pages/informative_page.dart';
 import 'package:fimDosTemposWeekly/utils/datasource/firebase/FirebaseStore.dart';
 import 'package:flutter/material.dart';
@@ -18,20 +19,13 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
-  List<Arc> acts = [];
-
-  String getActTitle(int index) {
-    return acts[index].name;
-  }
-
-  void presentAct(int index, BuildContext ctx) {
-    Arc selectedAct = acts[index];
-    Navigator.of(ctx).push(
+  void presentAct() {
+    Navigator.of(context).push(
       PageRouteBuilder(
         transitionDuration: Duration(milliseconds: 350),
         reverseTransitionDuration: Duration(milliseconds: 250),
         pageBuilder: (context, a, b)  {
-          return ActPage(title: selectedAct.name, chapters: selectedAct.chapters);
+          return ArcListPage(title: "Arcos");
         },
         transitionsBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
           return FadeTransition(
@@ -43,7 +37,25 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void presentInformative(BuildContext ctx) {
+  void presentCharacterList() {
+    Navigator.of(context).push(
+        PageRouteBuilder(
+          transitionDuration: Duration(milliseconds: 350),
+          reverseTransitionDuration: Duration(milliseconds: 250),
+          pageBuilder: (context, a, b)  {
+            return CharacterListPage(title: "Personagens");
+          },
+          transitionsBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+            return FadeTransition(
+              opacity: animation,
+              child: child,
+            );
+          },
+        )
+    );
+  }
+
+  void presentInformative() {
     PageRouteBuilder nextRoute =  PageRouteBuilder(
       transitionDuration: Duration(milliseconds: 350),
       reverseTransitionDuration: Duration(milliseconds: 250),
@@ -55,18 +67,12 @@ class _HomePageState extends State<HomePage> {
       },
     );
 
-    Navigator.push(ctx, nextRoute);
+    Navigator.push(context, nextRoute);
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Arc>>(
-      future: FirebaseManager.getArcs(),
-      builder: (BuildContext ctx, AsyncSnapshot<List<Arc>> snapshot) {
-        if (snapshot.data != null) {
-          acts = snapshot.data!;
-        }
-        return Scaffold(
+     return Scaffold(
           appBar: AppBar(
             title: Text("Fim dos Tempos"),
           ),
@@ -81,39 +87,47 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Expanded(
-                  child: Center(
-                    child: Padding(
-                        padding: const EdgeInsets.only(left: 25, right: 25, bottom: 30),
-                        child: new ListView.builder(
-                          padding: EdgeInsets.only(top: 40),
-                          itemCount: acts.length,
-                          itemBuilder: (BuildContext ctxt, int index) {
-                            return GestureDetector(
-                              onTap: () {
-                                presentAct(index, context);
-                              },
-                              child: Text(
-                                getActTitle(index),
+                SizedBox(height: 40),
+                GestureDetector(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text("História",
                                 style: TextStyle(
-                                    fontSize: 24,
-                                    color: Colors.black87,
-                                    fontStyle: FontStyle.italic,
-                                    decoration: TextDecoration.underline,
-                                    fontWeight: FontWeight.bold,
-                                    decorationStyle: TextDecorationStyle.solid
-                                ),
-                              ),
-                            );
-                          },
-                        )
+                                fontSize: 24,
+                                color: Colors.black87,
+                                fontStyle: FontStyle.italic,
+                                decoration: TextDecoration.underline,
+                                fontWeight: FontWeight.bold,
+                                decorationStyle: TextDecorationStyle.solid
+                            ),
                     ),
                   ),
+                  onTap: presentAct,
+
+                ),
+                GestureDetector(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      "Personagens",
+                      style: TextStyle(
+                          fontSize: 24,
+                          color: Colors.black87,
+                          fontStyle: FontStyle.italic,
+                          decoration: TextDecoration.underline,
+                          fontWeight: FontWeight.bold,
+                          decorationStyle: TextDecorationStyle.solid
+                      ),),
+                  ),
+                  onTap: presentCharacterList,
+                ),
+                Expanded(
+                  child: SizedBox()
                 ),
                 Padding(
                   padding: const EdgeInsets.only(bottom: 30.0),
                   child: GestureDetector(
-                    onTap: () => presentInformative(context),
+                    onTap: presentInformative,
                     child: Image.asset(
                       "assets/images/tormenta-logo.png",
                       height: 40,
@@ -125,7 +139,5 @@ class _HomePageState extends State<HomePage> {
             ),
           ), // This trailing comma makes auto-formatting nicer for build methods.
         );
-      }
-    );
   }
 }

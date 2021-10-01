@@ -43,7 +43,7 @@ class _InformativePageState extends State<InformativePage> {
           height: MediaQuery.of(context).size.height,
           child: Padding(
               padding: const EdgeInsets.only(top: 50, left: 25, right: 25, bottom: 30),
-                child: Column(
+                child:  Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -71,7 +71,7 @@ class _InformativePageState extends State<InformativePage> {
                           );
                         }
                     ),
-                    SizedBox(height: 50),
+                    SizedBox(height: 25),
                     FutureBuilder<List<LinkPath>>(
                           future: FirebaseManager.getLinks(),
                           builder: (BuildContext ctx, AsyncSnapshot<List<LinkPath>> snapshot) {
@@ -88,8 +88,8 @@ class _InformativePageState extends State<InformativePage> {
                                                     child: Padding(
                                                       padding: const EdgeInsets.all(10.0),
                                                       child: Container(
-                                                        height: 40,
-                                                        width: 40,
+                                                        height: 30,
+                                                        width: 30,
                                                         decoration: BoxDecoration(
                                                             image: DecorationImage(
                                                                 image: AssetImage("assets/images/${links[index].assetPath}"),

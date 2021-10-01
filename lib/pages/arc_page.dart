@@ -1,5 +1,6 @@
 import 'package:fimDosTemposWeekly/models/models.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'chapter_page.dart';
 
@@ -16,8 +17,17 @@ class ActPage extends StatefulWidget {
 
 class _ActPageState extends State<ActPage> {
 
+  int? markedPage;
+
   String getChapterTitle(int index) {
-    return "Capítulo ${index + 1}: ${widget.chapters[index].title}";
+    String baseTitle = "Capítulo ${index + 1}: ${widget.chapters[index].title}";
+    return baseTitle;
+  }
+
+  void loadMarkedPage() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    markedPage = await prefs.getInt("markedPage");
+    setState(() { });
   }
 
   void presentChapter(int index, BuildContext ctx) {
@@ -41,6 +51,7 @@ class _ActPageState extends State<ActPage> {
 
   @override
   Widget build(BuildContext context) {
+    loadMarkedPage();
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -66,15 +77,22 @@ class _ActPageState extends State<ActPage> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          getChapterTitle(index),
-                          style: TextStyle(
-                            fontSize: 20,
-                            color: Colors.black87,
-                            decoration: TextDecoration.underline,
-                            fontStyle: FontStyle.italic,
-                            fontWeight: FontWeight.bold
-                          ),
+                        Row(
+                          children: [
+                            index == markedPage ? Image.asset("assets/images/bookmark.png", height: 20,) : SizedBox(),
+                            Expanded(
+                              child: Text(
+                                getChapterTitle(index),
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  color: Colors.black87,
+                                  decoration: TextDecoration.underline,
+                                  fontStyle: FontStyle.italic,
+                                  fontWeight: FontWeight.bold
+                                ),
+                              ),
+                            )
+                          ]
                         ),
                         SizedBox(height: 50)
                       ]

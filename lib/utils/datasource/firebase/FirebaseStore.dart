@@ -35,6 +35,8 @@ class FirebaseManager {
 
         chaptersList.forEach((chapterRef) {
           String title = chapterRef['title'];
+          String duration = chapterRef['duration'];
+          String releaseDate = chapterRef['releaseDate'];
           String videoUrl = chapterRef['videoUrl'];
           int index = chapterRef['index'];
 
@@ -48,7 +50,7 @@ class FirebaseManager {
             paragraphs.add(paragraph);
           });
 
-          Chapter chapter = Chapter(index, title, paragraphs, videoUrl);
+          Chapter chapter = Chapter(index, title, paragraphs, videoUrl, duration, releaseDate);
           chapters.add(chapter);
         });
 
@@ -72,6 +74,26 @@ class FirebaseManager {
       });
     });
     return links;
+  }
+
+  static Future<List<Character>> getCharacters() async {
+    List<Character> characters = List.empty(growable: true);
+    await _database.once().then((snapshot) {
+      final reference = Map<String, dynamic>.from(snapshot.value);
+      final characterList = reference["characters"];
+      characterList.forEach((characterRef) {
+        String name = characterRef['name'];
+        String iconUrl = characterRef['iconUrl'];
+        String avatarUrl = characterRef['avatarUrl'];
+        String pageUrl = characterRef['pageUrl'];
+        String phrase = characterRef['phrase'];
+
+        characters.add(Character(name, iconUrl, avatarUrl, pageUrl, phrase));
+      });
+    });
+
+    characters.sort((a,b) =>  a.name.compareTo(b.name));
+    return characters;
   }
 
   static Future<List<String>> getInformations() async {
