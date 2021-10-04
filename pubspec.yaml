@@ -56,6 +56,8 @@ flutter:
     - assets/images/papyrus.jpeg
     - assets/images/character-sheet.png
     - assets/images/bookmark.png
+    - assets/images/twitch-alert.png
+    - assets/images/page-scroll.png
     - assets/images/tormenta-logo.png
     - assets/images/yt-icon.png
     - assets/images/jambo.jpg

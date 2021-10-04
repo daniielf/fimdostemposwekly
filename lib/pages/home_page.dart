@@ -1,11 +1,11 @@
-import 'package:fimDosTemposWeekly/models/models.dart';
+import 'dart:async';
+
 import 'package:fimDosTemposWeekly/pages/arc_list_page.dart';
 import 'package:fimDosTemposWeekly/pages/character_list_page.dart';
 import 'package:fimDosTemposWeekly/pages/informative_page.dart';
 import 'package:fimDosTemposWeekly/utils/datasource/firebase/FirebaseStore.dart';
 import 'package:flutter/material.dart';
-
-import 'arc_page.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatefulWidget {
 
@@ -18,6 +18,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
+  bool isTwitchLive = false;
+  StreamSubscription? isTwitchLiveSubscription;
 
   void presentAct() {
     Navigator.of(context).push(
@@ -70,12 +73,47 @@ class _HomePageState extends State<HomePage> {
     Navigator.push(context, nextRoute);
   }
 
+  openLiveTwitch() async {
+    String url = "https://www.twitch.tv/jamboeditora";
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  void startObservingTwitch() {
+    if (isTwitchLiveSubscription != null) { return; }
+    isTwitchLiveSubscription = FirebaseManager.getTwitchLive().onValue.listen((event) {
+      if (event.snapshot.value is bool) {
+        bool newValue = event.snapshot.value;
+        setState(() {
+          this.isTwitchLive = newValue;
+        });
+      } else {
+        print ("IS NOT BOOL");
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    startObservingTwitch();
      return Scaffold(
           appBar: AppBar(
             title: Text("Fim dos Tempos"),
           ),
+          floatingActionButton: isTwitchLive ? 
+            FloatingActionButton(
+              onPressed: openLiveTwitch,
+              backgroundColor: Colors.transparent,
+              child:
+                Image.asset(
+                  "assets/images/twitch-alert.png",
+                height: 64),
+            ) :
+            SizedBox(),
+          floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
           body: Container(
             decoration: BoxDecoration(
                 image: DecorationImage(

@@ -21,9 +21,9 @@ class _InformativePageState extends State<InformativePage> {
   openLink(int index) async {
     String url = links[index].url;
     if (await canLaunch(url)) {
-    await launch(url);
+      await launch(url);
     } else {
-    throw 'Could not launch $url';
+      throw 'Could not launch $url';
     }
   }
 

@@ -8,7 +8,6 @@ import 'package:firebase_database/firebase_database.dart';
 
 class FirebaseManager {
 
-  static FirebaseApp app = Firebase.app("FimDosTemposWeekly_iOS");
   static FirebaseFirestore firestore = FirebaseFirestore.instance;
   static final _database = FirebaseDatabase.instance.reference();
 
@@ -107,5 +106,8 @@ class FirebaseManager {
     });
     return infos;
   }
-
+  
+  static DatabaseReference getTwitchLive() {
+    return _database.child("twitchLive");
+  }
 }

@@ -79,7 +79,10 @@ class _ActPageState extends State<ActPage> {
                       children: [
                         Row(
                           children: [
-                            index == markedPage ? Image.asset("assets/images/bookmark.png", height: 20,) : SizedBox(),
+                            index == markedPage ?
+                            Image.asset("assets/images/bookmark.png", height: 20,) :
+                            Image.asset("assets/images/page-scroll.png", height: 20,),
+                            SizedBox(width: 15),
                             Expanded(
                               child: Text(
                                 getChapterTitle(index),
