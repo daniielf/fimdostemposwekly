@@ -28,7 +28,7 @@ class _ArcListPageState extends State<ArcListPage> {
   void presentAct(int index, BuildContext ctx) {
     Arc selectedAct = acts[index];
     Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => ActPage(title: selectedAct.name, chapters: selectedAct.chapters)),
+      MaterialPageRoute(builder: (context) => ActPage(title: selectedAct.name, chapters: selectedAct.chapters, arcIndex: index,)),
     );
   }
 

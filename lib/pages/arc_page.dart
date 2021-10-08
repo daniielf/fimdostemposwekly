@@ -6,10 +6,16 @@ import 'chapter_page.dart';
 
 class ActPage extends StatefulWidget {
 
-  ActPage({Key? key, required this.title, required this.chapters}) : super(key: key);
+  ActPage({
+    Key? key,
+    required this.title,
+    required this.chapters,
+    required this.arcIndex
+  }) : super(key: key);
 
   final String title;
   final List<Chapter> chapters;
+  final int arcIndex;
 
   @override
   _ActPageState createState() => _ActPageState();
@@ -44,13 +50,13 @@ class _ActPageState extends State<ActPage> {
     Chapter selectedChapter = widget.chapters[index];
     Navigator.of(context).push(
       MaterialPageRoute(builder: (context) =>
-          ChapterPage(
-            title: "Capítulo ${selectedChapter.index + 1}",
-            chapter: selectedChapter,
-            chaptersList: widget.chapters,
-            onMarkChangeCallback: markChanged)),
+        ChapterPage(
+          chapterIndex: selectedChapter.index,
+          arcIndex: widget.arcIndex,
+          chaptersCount: widget.chapters.length,
+          onMarkChangeCallback: markChanged)
+        ),
     );
-
   }
 
   @override

@@ -123,33 +123,30 @@ class FirebaseManager {
         });
   }
 
-  static Future<Chapter?> getChapter(int arc, int chapterIndex) async {
-    await _database.child("arcs").child("$arc").child("chapters").child("$chapterIndex").once().then((snapshot) {
-      try {
-        var chapterRef = snapshot.value;
-        String title = chapterRef['title'];
-        String duration = chapterRef['duration'];
-        String releaseDate = chapterRef['releaseDate'];
-        String videoUrl = chapterRef['videoUrl'];
-        int index = chapterRef['index'];
+  static Future<Chapter> getChapter(int arc, int chapterIndex) async {
+    try {
+      var snapshot = await _database.child("arcs").child("$arc").child("chapters").child("$chapterIndex").once();
+      var chapterRef = snapshot.value;
+      String title = chapterRef['title'];
+      String duration = chapterRef['duration'];
+      String releaseDate = chapterRef['releaseDate'];
+      String videoUrl = chapterRef['videoUrl'];
+      int index = chapterRef['index'];
 
-        List<Paragraph> paragraphs = List<Paragraph>.empty(growable: true);
-        final paragraphList = chapterRef['paragraphs'];
+      List<Paragraph> paragraphs = List<Paragraph>.empty(growable: true);
+      final paragraphList = chapterRef['paragraphs'];
 
-        paragraphList.forEach((paragRef) {
-          String text = paragRef['text'];
-          int index = paragRef['index'];
-          final paragraph = Paragraph(index, text);
-          paragraphs.add(paragraph);
-        });
+      paragraphList.forEach((paragRef) {
+        String text = paragRef['text'];
+        int index = paragRef['index'];
+        final paragraph = Paragraph(index, text);
+        paragraphs.add(paragraph);
+      });
 
-        return Chapter(index, title, paragraphs, videoUrl, duration, releaseDate);
-      } catch (error) {
-        print("Parse , {$error}");
-        return error;
-      }
-    }).catchError((error) {
-      return error;
-    });
+      Chapter chapter = Chapter(index, title, paragraphs, videoUrl, duration, releaseDate);
+      return chapter;
+    } catch (error) {
+      return Future.error(error);
+    }
   }
 }
