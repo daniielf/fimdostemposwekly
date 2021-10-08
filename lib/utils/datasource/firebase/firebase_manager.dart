@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
 
@@ -56,7 +57,10 @@ class FirebaseManager {
         final arc = Arc(index, name, chapters);
         arcs.add(arc);
       });
+    }).catchError((error) {
+      return error;
     });
+
     return arcs;
   }
 
@@ -82,12 +86,13 @@ class FirebaseManager {
       final characterList = reference["characters"];
       characterList.forEach((characterRef) {
         String name = characterRef['name'];
+        String description = characterRef['description'];
         String iconUrl = characterRef['iconUrl'];
         String avatarUrl = characterRef['avatarUrl'];
         String pageUrl = characterRef['pageUrl'];
         String phrase = characterRef['phrase'];
 
-        characters.add(Character(name, iconUrl, avatarUrl, pageUrl, phrase));
+        characters.add(Character(name, description, iconUrl, avatarUrl, pageUrl, phrase));
       });
     });
 
@@ -109,5 +114,42 @@ class FirebaseManager {
   
   static DatabaseReference getTwitchLive() {
     return _database.child("twitchLive");
+  }
+
+  static Future<void> report(String text, String chapter) {
+    String fullReportText = "Chapter $chapter: $text";
+    return firestore.collection("reports").add({
+          'text': fullReportText
+        });
+  }
+
+  static Future<Chapter?> getChapter(int arc, int chapterIndex) async {
+    await _database.child("arcs").child("$arc").child("chapters").child("$chapterIndex").once().then((snapshot) {
+      try {
+        var chapterRef = snapshot.value;
+        String title = chapterRef['title'];
+        String duration = chapterRef['duration'];
+        String releaseDate = chapterRef['releaseDate'];
+        String videoUrl = chapterRef['videoUrl'];
+        int index = chapterRef['index'];
+
+        List<Paragraph> paragraphs = List<Paragraph>.empty(growable: true);
+        final paragraphList = chapterRef['paragraphs'];
+
+        paragraphList.forEach((paragRef) {
+          String text = paragRef['text'];
+          int index = paragRef['index'];
+          final paragraph = Paragraph(index, text);
+          paragraphs.add(paragraph);
+        });
+
+        return Chapter(index, title, paragraphs, videoUrl, duration, releaseDate);
+      } catch (error) {
+        print("Parse , {$error}");
+        return error;
+      }
+    }).catchError((error) {
+      return error;
+    });
   }
 }

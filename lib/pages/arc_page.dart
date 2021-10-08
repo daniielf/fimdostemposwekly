@@ -19,6 +19,12 @@ class _ActPageState extends State<ActPage> {
 
   int? markedPage;
 
+  @override
+  initState() {
+    loadMarkedPage();
+    super.initState();
+  }
+
   String getChapterTitle(int index) {
     String baseTitle = "Capítulo ${index + 1}: ${widget.chapters[index].title}";
     return baseTitle;
@@ -26,32 +32,29 @@ class _ActPageState extends State<ActPage> {
 
   void loadMarkedPage() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    markedPage = await prefs.getInt("markedPage");
+    this.markedPage = prefs.getInt("markedPage");
     setState(() { });
+  }
+
+  void markChanged() {
+    loadMarkedPage();
   }
 
   void presentChapter(int index, BuildContext ctx) {
     Chapter selectedChapter = widget.chapters[index];
-    Navigator.of(ctx).push(
-        PageRouteBuilder(
-          transitionDuration: Duration(milliseconds: 350),
-          reverseTransitionDuration: Duration(milliseconds: 250),
-          pageBuilder: (context, a, b)  {
-            return ChapterPage(title: "Capítulo ${selectedChapter.index + 1}", chapter: selectedChapter, chaptersList: widget.chapters);
-          },
-          transitionsBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
-            return FadeTransition(
-              opacity: animation,
-              child: child,
-            );
-          },
-        )
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) =>
+          ChapterPage(
+            title: "Capítulo ${selectedChapter.index + 1}",
+            chapter: selectedChapter,
+            chaptersList: widget.chapters,
+            onMarkChangeCallback: markChanged)),
     );
+
   }
 
   @override
   Widget build(BuildContext context) {
-    loadMarkedPage();
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -65,7 +68,8 @@ class _ActPageState extends State<ActPage> {
         ),
         child:
           Center(
-            child: Padding(
+            child:
+            Padding(
               padding: const EdgeInsets.only(left: 25, right: 25, bottom: 30),
               child: new ListView.builder(
                 padding: EdgeInsets.only(top: 40),

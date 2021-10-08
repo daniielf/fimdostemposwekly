@@ -59,14 +59,16 @@ class LinkPath {
 class Character {
 
   String name;
+  String description;
   String iconUrl;
   String avatarUrl;
   String pageUrl;
   String phrase;
 
-  Character(this.name, this.iconUrl, this.avatarUrl, this.pageUrl, this.phrase);
+  Character(this.name, this.description, this.iconUrl, this.avatarUrl, this.pageUrl, this.phrase);
   Character.from(Map<String, dynamic> json) :
       name = json['name'],
+      description = json['description'],
       iconUrl = json['iconUrl'],
       avatarUrl = json['avatarUrl'],
       pageUrl = json['pageUrl'],

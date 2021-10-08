@@ -1,8 +1,7 @@
 import 'package:fimDosTemposWeekly/models/models.dart';
 import 'package:fimDosTemposWeekly/pages/character_page.dart';
-import 'package:fimDosTemposWeekly/utils/datasource/firebase/FirebaseStore.dart';
+import 'package:fimDosTemposWeekly/utils/datasource/firebase/firebase_manager.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class CharacterListPage extends StatefulWidget {
@@ -59,7 +58,7 @@ class _CharacterListPageState extends State<CharacterListPage> {
           }
           return Scaffold(
             appBar: AppBar(
-              title: Text("História"),
+              title: Text("Personagens"),
             ),
             body: Container(
               decoration: BoxDecoration(
@@ -83,29 +82,38 @@ class _CharacterListPageState extends State<CharacterListPage> {
                             itemBuilder: (BuildContext ctxt, int index) {
                             return Padding(
                               padding: const EdgeInsets.only(top: 24.0, left: 8.0, right: 8.0),
-                              child: Row(
-                                children: [
-                                  GestureDetector(
-                                    child: Image.asset
+                              child: GestureDetector(
+                                onTap: () => presentChracter(index),
+                                child: Row(
+                                  children: [
+                                    Image.asset
                                       ("assets/images/" + characters[index].iconUrl,
                                       height: 60,
                                     ),
-                                    onTap: () => presentChracter(index),
-                                  ),
-                                  SizedBox(width: 10),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(characters[index].name,
-                                        style: TextStyle(
-                                            fontSize: 20,
-                                            color: Colors.black87,
-                                            fontWeight: FontWeight.bold,
-                                            decorationStyle: TextDecorationStyle.solid)
+                                    SizedBox(width: 10),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(characters[index].name,
+                                            style: TextStyle(
+                                                fontSize: 20,
+                                                color: Colors.black87,
+                                                fontWeight: FontWeight.bold,
+                                                decorationStyle: TextDecorationStyle.solid)
+                                          ),
+                                          Text(characters[index].description,
+                                              maxLines: 2,
+                                              style: TextStyle(
+                                                  fontSize: 18,
+                                                  color: Colors.black87,
+                                                  decorationStyle: TextDecorationStyle.solid)
+                                          )
+                                        ],
                                       ),
-                                    ],
-                                  ),
-                                ],
+                                    ),
+                                  ],
+                                ),
                               ),
                             );
                           })

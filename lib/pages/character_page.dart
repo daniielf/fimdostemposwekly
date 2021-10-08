@@ -1,5 +1,6 @@
 import 'package:fimDosTemposWeekly/models/models.dart';
-import 'package:fimDosTemposWeekly/utils/datasource/firebase/FirebaseStore.dart';
+import 'package:fimDosTemposWeekly/utils/datasource/firebase/firebase_manager.dart';
+import 'package:fimDosTemposWeekly/utils/general_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -44,12 +45,51 @@ class _CharacterPageState extends State<CharacterPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Container(
+                    Expanded(
                       child: Padding(
-                        padding: const EdgeInsets.only(left: 50.0, right: 50.0),
+                        padding: const EdgeInsets.only(left: 24.0, right: 24.0),
                         child: Center(
-                          child: Image.network(
-                              widget.character.avatarUrl),
+                          child:
+                          Image.network(
+                              widget.character.avatarUrl,
+                              errorBuilder: (context, url, error) {
+                                return Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Image.asset("assets/images/image-error.png"),
+                                      SizedBox(height: 16),
+                                      SizedBox(
+                                        width: 240,
+                                        child: Text(
+                                          GeneralStrings.imageError,
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            color: Colors.black87,
+                                          ),
+                                        ),
+                                      )
+                                    ]
+                                );
+                              },
+                              loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                                if (loadingProgress == null) {
+                                  return child;
+                                }
+
+                                return Center(
+                                  child: SizedBox(
+                                    child: CircularProgressIndicator(
+                                      color: Colors.red,
+                                      strokeWidth: 5,
+                                    ),
+                                    height: 40,
+                                    width: 40,
+                                  ),
+                                );
+                              }
+                            )
                         ),
                       ),
                     ),
@@ -70,7 +110,8 @@ class _CharacterPageState extends State<CharacterPage> {
                         ),
                         onTap: openLink,
                       ),
-                    )
+                    ),
+                    SizedBox(height: 40),
                   ],
                 ),
               )

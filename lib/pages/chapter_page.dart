@@ -1,17 +1,25 @@
 import 'package:fimDosTemposWeekly/colors/custom_colors.dart';
 import 'package:fimDosTemposWeekly/models/models.dart';
+import 'package:fimDosTemposWeekly/utils/datasource/firebase/firebase_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+typedef VoidCallback = void Function();
+
 class ChapterPage extends StatefulWidget {
 
-  ChapterPage({Key? key, required this.title, required this.chapter, required this.chaptersList }) : super(key: key);
+  ChapterPage({Key? key,
+              required this.title,
+              required this.chapter,
+              required this.chaptersList,
+              this.onMarkChangeCallback}) : super(key: key);
 
   final String title;
   final Chapter chapter;
   final List<Chapter> chaptersList;
+  VoidCallback? onMarkChangeCallback;
 
   @override
   _ChapterPageState createState() => _ChapterPageState();
@@ -20,12 +28,20 @@ class ChapterPage extends StatefulWidget {
 class _ChapterPageState extends State<ChapterPage> {
 
   bool isMarked = false;
+  String reportInput = "";
+
+  @override
+  void initState() {
+    loadMarkedPage();
+    super.initState();
+  }
 
   void loadMarkedPage() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int? selectedMark = await prefs.getInt("markedPage");
-    isMarked = selectedMark == widget.chapter.index;
-    setState(() { });
+    setState(() {
+      isMarked = selectedMark == widget.chapter.index;
+    });
   }
 
   String getParagraph(int index) {
@@ -56,6 +72,11 @@ class _ChapterPageState extends State<ChapterPage> {
     } else {
       await prefs.setInt('markedPage', widget.chapter.index);
     }
+    loadMarkedPage();
+
+    if (widget.onMarkChangeCallback != null) {
+      widget.onMarkChangeCallback!();
+    }
     Navigator.pop(context);
   }
 
@@ -65,6 +86,84 @@ class _ChapterPageState extends State<ChapterPage> {
 
   bool hasNext() {
     return widget.chapter.index < widget.chaptersList.length - 1;
+  }
+
+  void reportChapter() {
+    presentLoadingAlert();
+    FirebaseManager.report(this.reportInput, "${widget.chapter.index + 1}").then((value) {
+      Navigator.of(context).pop();
+      this.reportInput = "";
+      this.presentSuccessReportAlert();
+    }).catchError((onError) {
+      Navigator.of(context).pop();
+      this.presentErrorReportAlert();
+    });
+  }
+
+  void presentLoadingAlert() {
+    AlertDialog alert = AlertDialog(
+      content: SizedBox(
+        height: 45,
+        width: 45,
+        child: Center(
+            child: CircularProgressIndicator(),
+        ),
+      ),
+    );
+    showDialog(context: context, builder: (_) { return alert; });
+  }
+
+  void presentSuccessReportAlert() {
+    AlertDialog alert = AlertDialog(
+      title: Text("Sucesso"),
+      content: Text("Comentário enviado com sucesso!"),
+      actions: [
+        TextButton(onPressed: () {
+          Navigator.of(context).pop();
+          Navigator.of(context).pop();
+        }, child:
+        Text("Ok")),
+      ],
+    );
+    showDialog(context: context, builder: (_) { return alert; });
+  }
+
+  void presentErrorReportAlert() {
+    AlertDialog alert = AlertDialog(
+      title: Text("Falha"),
+      content: Text("Não foi possível enviar sua mensagem! Tente novamente mais tarde."),
+      actions: [
+        TextButton(onPressed: () {
+          Navigator.of(context).pop();
+          presentReportDialog();
+        }, child:
+        Text("Ok")),
+      ],
+    );
+    showDialog(context: context, builder: (_) { return alert; });
+  }
+
+  void presentReportDialog() {
+    AlertDialog alert = AlertDialog(
+      title: Text("Enviar comentário"),
+      content: TextField(
+        maxLines: 3,
+        controller: TextEditingController(text: this.reportInput),
+        onChanged: (text) { this.reportInput = text; },
+      ),
+      actions: [
+        TextButton(onPressed: () {
+          Navigator.of(context).pop();
+          Navigator.of(context).pop();
+        }, child: Text("Cancelar")),
+        TextButton(onPressed: () async {
+          Navigator.of(context).pop();
+          reportChapter();
+        }, child: Text("Enviar")),
+    ],
+    );
+
+    showDialog(context: context, builder: (_) { return alert; });
   }
 
   void presentChapter(Chapter chapter, BuildContext ctx) {
@@ -96,7 +195,6 @@ class _ChapterPageState extends State<ChapterPage> {
 
   @override
   Widget build(BuildContext context) {
-      loadMarkedPage();
       return Scaffold(
         appBar: AppBar(
           title: Text(widget.title),
@@ -121,26 +219,39 @@ class _ChapterPageState extends State<ChapterPage> {
                 Expanded(
                   child: Column(
                     children: [
-                        Padding(
-                          padding: EdgeInsets.all(10),
-                          child: GestureDetector(
-                            onTap: saveMarker,
-                            child: Text(
-                            "> ${isMarked ? "Remover" : "Salvar"} Marcador",
-                            style: TextStyle(
-                              fontSize: 20,
-                              color: Colors.white),
+                      Padding(
+                        padding: EdgeInsets.only(top: 10, left: 20, right: 10),
+                        child: GestureDetector(
+                          onTap: saveMarker,
+                          child: Row(
+                              children: [
+                                Image.asset("assets/images/arrow-right.png", width: 24,),
+                                SizedBox(width: 5),
+                                Text("${isMarked ? "Remover" : "Colocar"} Marcador",
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      color: Colors.white),
+                                ),
+                              ]
                           ),
                         ),
                       ),
+                      SizedBox(height: 20),
                       Padding(
-                        padding: EdgeInsets.all(10),
+                        padding: EdgeInsets.only(top: 10, left: 20, right: 10),
                         child: GestureDetector(
-                          child: Text(
-                            "> Reportar Problema",
-                            style: TextStyle(
-                                fontSize: 20,
-                                color: Colors.white),
+                          onTap: presentReportDialog,
+                          child: Row(
+                            children: [
+                              Image.asset("assets/images/arrow-right.png", width: 24,),
+                              SizedBox(width: 5),
+                              Text(
+                              "Reportar Problema",
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  color: Colors.white),
+                              ),
+                            ]
                           ),
                         ),
                       )

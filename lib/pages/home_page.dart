@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:fimDosTemposWeekly/pages/arc_list_page.dart';
 import 'package:fimDosTemposWeekly/pages/character_list_page.dart';
 import 'package:fimDosTemposWeekly/pages/informative_page.dart';
-import 'package:fimDosTemposWeekly/utils/datasource/firebase/FirebaseStore.dart';
+import 'package:fimDosTemposWeekly/utils/datasource/firebase/firebase_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -24,53 +24,20 @@ class _HomePageState extends State<HomePage> {
 
   void presentAct() {
     Navigator.of(context).push(
-      PageRouteBuilder(
-        transitionDuration: Duration(milliseconds: 350),
-        reverseTransitionDuration: Duration(milliseconds: 250),
-        pageBuilder: (context, a, b)  {
-          return ArcListPage(title: "Arcos");
-        },
-        transitionsBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
-          return FadeTransition(
-            opacity: animation,
-            child: child,
-          );
-        },
-    )
+        MaterialPageRoute(builder: (context) =>ArcListPage(title: "Arcos"))
     );
   }
 
   void presentCharacterList() {
     Navigator.of(context).push(
-        PageRouteBuilder(
-          transitionDuration: Duration(milliseconds: 350),
-          reverseTransitionDuration: Duration(milliseconds: 250),
-          pageBuilder: (context, a, b)  {
-            return CharacterListPage(title: "Personagens");
-          },
-          transitionsBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
-            return FadeTransition(
-              opacity: animation,
-              child: child,
-            );
-          },
-        )
+        MaterialPageRoute(builder: (context) => CharacterListPage(title: "Personagens")),
     );
   }
 
   void presentInformative() {
-    PageRouteBuilder nextRoute =  PageRouteBuilder(
-      transitionDuration: Duration(milliseconds: 350),
-      reverseTransitionDuration: Duration(milliseconds: 250),
-      pageBuilder: (context, a, b)  {
-        return InformativePage(title: "Informações");
-      },
-      transitionsBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
-        return FadeTransition(opacity: animation, child: child);
-      },
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => InformativePage(title: "Informações")),
     );
-
-    Navigator.push(context, nextRoute);
   }
 
   openLiveTwitch() async {
@@ -90,14 +57,13 @@ class _HomePageState extends State<HomePage> {
         setState(() {
           this.isTwitchLive = newValue;
         });
-      } else {
-        print ("IS NOT BOOL");
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    FirebaseManager.getChapter(0, 0);
     startObservingTwitch();
      return Scaffold(
           appBar: AppBar(
@@ -123,41 +89,34 @@ class _HomePageState extends State<HomePage> {
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 40),
-                GestureDetector(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text("História",
-                                style: TextStyle(
-                                fontSize: 24,
-                                color: Colors.black87,
-                                fontStyle: FontStyle.italic,
-                                decoration: TextDecoration.underline,
-                                fontWeight: FontWeight.bold,
-                                decorationStyle: TextDecorationStyle.solid
-                            ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 2, left: 16, bottom: 2, right: 64),
+                  child: GestureDetector(
+                    child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Image.asset(
+                          "assets/images/histories-banner.png",
+                          fit: BoxFit.scaleDown,
+                        )
                     ),
+                    onTap: presentAct,
                   ),
-                  onTap: presentAct,
-
                 ),
-                GestureDetector(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      "Personagens",
-                      style: TextStyle(
-                          fontSize: 24,
-                          color: Colors.black87,
-                          fontStyle: FontStyle.italic,
-                          decoration: TextDecoration.underline,
-                          fontWeight: FontWeight.bold,
-                          decorationStyle: TextDecorationStyle.solid
-                      ),),
+                Padding(
+                  padding: const EdgeInsets.only(top: 2, left: 64, bottom: 2, right: 16),
+                  child: GestureDetector(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Image.asset(
+                          "assets/images/characters-banner.png",
+                        fit: BoxFit.scaleDown,
+                      )
+                    ),
+                    onTap: presentCharacterList,
                   ),
-                  onTap: presentCharacterList,
                 ),
                 Expanded(
                   child: SizedBox()

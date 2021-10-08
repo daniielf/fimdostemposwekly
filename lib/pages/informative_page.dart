@@ -1,5 +1,5 @@
 import 'package:fimDosTemposWeekly/models/models.dart';
-import 'package:fimDosTemposWeekly/utils/datasource/firebase/FirebaseStore.dart';
+import 'package:fimDosTemposWeekly/utils/datasource/firebase/firebase_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 

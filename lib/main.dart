@@ -1,7 +1,7 @@
 import 'package:fimDosTemposWeekly/colors/custom_colors.dart';
 import 'package:fimDosTemposWeekly/pages/home_page.dart';
-import 'package:fimDosTemposWeekly/utils/datasource/firebase/FirebaseStore.dart';
-import 'package:fimDosTemposWeekly/utils/notification/notofication_manager.dart';
+import 'package:fimDosTemposWeekly/utils/datasource/firebase/firebase_manager.dart';
+import 'package:fimDosTemposWeekly/utils/notification/notification_manager.dart';
 import 'package:flutter/material.dart';
 
 void main() async {
