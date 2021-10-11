@@ -80,7 +80,7 @@ class _ChapterPageState extends State<ChapterPage> {
   }
 
   bool hasPrevious() {
-    return widget.chapterIndex - 1 >= 0;
+    return widget.chaptersCount > 1 && widget.chapterIndex - 1 >= 0;
   }
 
   bool hasNext() {
@@ -293,14 +293,14 @@ class _ChapterPageState extends State<ChapterPage> {
                 Padding(
                   padding: const EdgeInsets.only(top: 20.0),
                   child: Text(
-                    "Dia de Lançamento: ${chapter?.releaseDate}",
+                    "Dia de Lançamento: ${chapter?.releaseDate ?? ""}",
                     style: TextStyle(fontSize: 18, color: Colors.white60),
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 16.0),
                   child: Text(
-                    "Duração do Episódio: ${chapter?.duration}",
+                    "Duração do Episódio: ${chapter?.duration ?? ""}",
                     style: TextStyle(fontSize: 18, color: Colors.white60),
                   ),
                 ),

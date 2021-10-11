@@ -125,7 +125,7 @@ class FirebaseManager {
 
   static Future<Chapter> getChapter(int arc, int chapterIndex) async {
     try {
-      var snapshot = await _database.child("arcs").child("$arc").child("chapters").child("$chapterIndex").once();
+      var snapshot = await _database.child("arcs").child("$arc").child("chapters").child("$chapterIndex").once().timeout(Duration(seconds: 10));
       var chapterRef = snapshot.value;
       String title = chapterRef['title'];
       String duration = chapterRef['duration'];

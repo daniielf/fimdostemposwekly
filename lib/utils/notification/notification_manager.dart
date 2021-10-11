@@ -15,5 +15,16 @@ class NotificationManager {
             sound: true,
         );
         messaging.setForegroundNotificationPresentationOptions(alert: true, badge: true);
+
+        var token = await FirebaseMessaging.instance.getToken();
+        print(token);
+    }
+    
+    static startListening(Function callback) async {
+        FirebaseMessaging.onMessageOpenedApp.listen((event) {
+            if (event.data["open"] != null) {
+                callback(event.data["open"]);
+            }
+        });
     }
 }

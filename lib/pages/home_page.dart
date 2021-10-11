@@ -1,11 +1,16 @@
 import 'dart:async';
-
+import 'dart:convert';
 import 'package:fimDosTemposWeekly/pages/arc_list_page.dart';
 import 'package:fimDosTemposWeekly/pages/character_list_page.dart';
 import 'package:fimDosTemposWeekly/pages/informative_page.dart';
 import 'package:fimDosTemposWeekly/utils/datasource/firebase/firebase_manager.dart';
+import 'package:fimDosTemposWeekly/utils/deeplink/deeplink_resolver.dart';
+import 'package:fimDosTemposWeekly/utils/notification/notification_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:crypto/crypto.dart' as crypto;
+
+import 'chapter_page.dart';
 
 class HomePage extends StatefulWidget {
 
@@ -21,6 +26,7 @@ class _HomePageState extends State<HomePage> {
 
   bool isTwitchLive = false;
   StreamSubscription? isTwitchLiveSubscription;
+  String receivedLink = "";
 
   void presentAct() {
     Navigator.of(context).push(
@@ -37,6 +43,17 @@ class _HomePageState extends State<HomePage> {
   void presentInformative() {
     Navigator.of(context).push(
       MaterialPageRoute(builder: (context) => InformativePage(title: "Informações")),
+    );
+  }
+
+  void presentChapter(int arc, int chapter) {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) =>
+          ChapterPage(
+              chapterIndex: chapter,
+              arcIndex: arc,
+              chaptersCount: 0)
+      ),
     );
   }
 
@@ -62,8 +79,24 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    initDeeplink();
+  }
+
+  void initDeeplink() {
+    NotificationManager.startListening((deeplinkUri) {
+      var path = DeeplinkResolver.getPath(deeplinkUri);
+      var arc = path["arc"];
+      var chapter = path["chapter"];
+      if (arc != null && chapter != null) {
+        presentChapter(arc, chapter);
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    FirebaseManager.getChapter(0, 0);
     startObservingTwitch();
      return Scaffold(
           appBar: AppBar(
@@ -91,7 +124,7 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 40),
+                SizedBox(height: 16),
                 Padding(
                   padding: const EdgeInsets.only(top: 2, left: 16, bottom: 2, right: 64),
                   child: GestureDetector(

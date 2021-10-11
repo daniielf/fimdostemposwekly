@@ -109,9 +109,7 @@ class _ArcListPageState extends State<ArcListPage> {
                                     child: Padding(
                                       padding: EdgeInsets.all(16),
                                       child: GestureDetector(
-                                        onTap: (){ setState(() {
-
-                                        }); },
+                                        onTap: (){ setState(() { }); },
                                         child: Column(
                                           mainAxisSize: MainAxisSize.min,
                                           mainAxisAlignment: MainAxisAlignment.center,
