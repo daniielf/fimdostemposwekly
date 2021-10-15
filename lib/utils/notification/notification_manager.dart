@@ -20,7 +20,7 @@ class NotificationManager {
         print(token);
     }
     
-    static startListening(Function callback) async {
+    static getFirebaseMessages(Function callback) async {
         FirebaseMessaging.onMessageOpenedApp.listen((event) {
             if (event.data["open"] != null) {
                 callback(event.data["open"]);

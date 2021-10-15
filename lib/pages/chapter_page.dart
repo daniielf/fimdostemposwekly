@@ -2,6 +2,7 @@ import 'package:fimDosTemposWeekly/colors/custom_colors.dart';
 import 'package:fimDosTemposWeekly/models/models.dart';
 import 'package:fimDosTemposWeekly/utils/datasource/firebase/firebase_manager.dart';
 import 'package:fimDosTemposWeekly/utils/general_strings.dart';
+import 'package:fimDosTemposWeekly/utils/share/share.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -260,6 +261,27 @@ class _ChapterPageState extends State<ChapterPage> {
                               "${isMarked ? "Remover" : "Colocar"} Marcador",
                               style:
                                   TextStyle(fontSize: 20, color: Colors.white),
+                            ),
+                          ]),
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      Padding(
+                        padding: EdgeInsets.only(top: 10, left: 20, right: 10),
+                        child: GestureDetector(
+                          onTap: () {
+                            ShareManager.share(widget.arcIndex, widget.chapterIndex, chapter?.title ?? "");
+                          },
+                          child: Row(children: [
+                            Image.asset(
+                              "assets/images/arrow-right.png",
+                              width: 24,
+                            ),
+                            SizedBox(width: 5),
+                            Text(
+                              "Compartilhar",
+                              style:
+                              TextStyle(fontSize: 20, color: Colors.white),
                             ),
                           ]),
                         ),

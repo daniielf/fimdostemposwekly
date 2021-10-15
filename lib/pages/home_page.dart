@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:fimDosTemposWeekly/pages/arc_list_page.dart';
 import 'package:fimDosTemposWeekly/pages/character_list_page.dart';
 import 'package:fimDosTemposWeekly/pages/informative_page.dart';
@@ -8,7 +7,7 @@ import 'package:fimDosTemposWeekly/utils/deeplink/deeplink_resolver.dart';
 import 'package:fimDosTemposWeekly/utils/notification/notification_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:crypto/crypto.dart' as crypto;
+import 'package:uni_links/uni_links.dart';
 
 import 'chapter_page.dart';
 
@@ -26,35 +25,57 @@ class _HomePageState extends State<HomePage> {
 
   bool isTwitchLive = false;
   StreamSubscription? isTwitchLiveSubscription;
-  String receivedLink = "";
+  var message = "";
 
-  void presentAct() {
-    Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) =>ArcListPage(title: "Arcos"))
-    );
+  @override
+  void initState() {
+    super.initState();
+    setUp();
   }
 
-  void presentCharacterList() {
-    Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => CharacterListPage(title: "Personagens")),
-    );
+  void setUp() async {
+    // deeplinkListener();
+    startObservingTwitch();
+    getInitialDeeplink();
+    getFirebaseNotifications();
   }
 
-  void presentInformative() {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => InformativePage(title: "Informações")),
-    );
+  void getFirebaseNotifications() {
+    NotificationManager.getFirebaseMessages((deeplinkUri) {
+      var path = DeeplinkResolver.getPath(deeplinkUri);
+      var arc = path["arc"];
+      var chapter = path["chapter"];
+      if (arc != null && chapter != null) {
+        presentChapter(arc, chapter);
+      }
+    });
   }
 
-  void presentChapter(int arc, int chapter) {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) =>
-          ChapterPage(
-              chapterIndex: chapter,
-              arcIndex: arc,
-              chaptersCount: 0)
-      ),
-    );
+  // void deeplinkListener() {
+  //   linkStream.listen((data) {
+  //     print (data);
+  //   });
+  //
+  //   _deeplinkSubscription?.onError((err) {
+  //     print(err);
+  //   });
+  // }
+
+  void getInitialDeeplink() async {
+    try {
+      var initialLink = await getInitialLink() ?? "";
+      var path = DeeplinkResolver.getPath(initialLink);
+      var arc = path["arc"];
+      var chapter = path["chapter"];
+      if (arc != null && chapter != null) {
+        Timer.periodic(Duration(milliseconds: 600), (timer) {
+          presentChapter(arc, chapter);
+          timer.cancel();
+        });
+      }
+    } catch (error) {
+      print (error);
+    }
   }
 
   openLiveTwitch() async {
@@ -66,7 +87,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  void startObservingTwitch() {
+  void startObservingTwitch() async {
     if (isTwitchLiveSubscription != null) { return; }
     isTwitchLiveSubscription = FirebaseManager.getTwitchLive().onValue.listen((event) {
       if (event.snapshot.value is bool) {
@@ -78,26 +99,37 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  @override
-  void initState() {
-    super.initState();
-    initDeeplink();
+  void presentAct() {
+    Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) =>ArcListPage(title: "Arcos"))
+    );
   }
 
-  void initDeeplink() {
-    NotificationManager.startListening((deeplinkUri) {
-      var path = DeeplinkResolver.getPath(deeplinkUri);
-      var arc = path["arc"];
-      var chapter = path["chapter"];
-      if (arc != null && chapter != null) {
-        presentChapter(arc, chapter);
-      }
-    });
+  void presentCharacterList() {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => CharacterListPage(title: "Personagens")),
+    );
+  }
+
+  void presentInformative() {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => InformativePage(title: "Informações")),
+    );
+  }
+
+  void presentChapter(int arc, int chapter) {
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) =>
+            ChapterPage(
+                chapterIndex: chapter,
+                arcIndex: arc,
+                chaptersCount: 0)
+        ),
+      );
   }
 
   @override
   Widget build(BuildContext context) {
-    startObservingTwitch();
      return Scaffold(
           appBar: AppBar(
             title: Text("Fim dos Tempos"),
@@ -124,6 +156,7 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Text(message),
                 SizedBox(height: 16),
                 Padding(
                   padding: const EdgeInsets.only(top: 2, left: 16, bottom: 2, right: 64),
