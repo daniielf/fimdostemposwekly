@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 class NotificationManager {
@@ -25,6 +27,16 @@ class NotificationManager {
             if (event.data["open"] != null) {
                 callback(event.data["open"]);
             }
+        });
+    }
+
+    static getFirebaseStartMessages(void callback(String deeplink)) {
+        messaging.getInitialMessage().then((RemoteMessage? message) {
+            if (message != null && message.data["open"] != null) {
+                callback(message.data["open"]);
+            }
+        }).catchError((error) {
+            print (error);
         });
     }
 }

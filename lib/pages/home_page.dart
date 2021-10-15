@@ -25,7 +25,6 @@ class _HomePageState extends State<HomePage> {
 
   bool isTwitchLive = false;
   StreamSubscription? isTwitchLiveSubscription;
-  var message = "";
 
   @override
   void initState() {
@@ -34,14 +33,14 @@ class _HomePageState extends State<HomePage> {
   }
 
   void setUp() async {
-    // deeplinkListener();
     startObservingTwitch();
     getInitialDeeplink();
     getFirebaseNotifications();
+    startListeningFirebaseMessages();
   }
 
   void getFirebaseNotifications() {
-    NotificationManager.getFirebaseMessages((deeplinkUri) {
+    NotificationManager.getFirebaseStartMessages((String deeplinkUri) {
       var path = DeeplinkResolver.getPath(deeplinkUri);
       var arc = path["arc"];
       var chapter = path["chapter"];
@@ -51,15 +50,16 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  // void deeplinkListener() {
-  //   linkStream.listen((data) {
-  //     print (data);
-  //   });
-  //
-  //   _deeplinkSubscription?.onError((err) {
-  //     print(err);
-  //   });
-  // }
+  void startListeningFirebaseMessages() {
+    NotificationManager.getFirebaseMessages((deeplinkUri) {
+      var path = DeeplinkResolver.getPath(deeplinkUri);
+      var arc = path["arc"];
+      var chapter = path["chapter"];
+      if (arc != null && chapter != null) {
+        presentChapter(arc, chapter);
+      }
+    });
+  }
 
   void getInitialDeeplink() async {
     try {
@@ -156,7 +156,6 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(message),
                 SizedBox(height: 16),
                 Padding(
                   padding: const EdgeInsets.only(top: 2, left: 16, bottom: 2, right: 64),
