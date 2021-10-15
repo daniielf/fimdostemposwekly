@@ -347,176 +347,182 @@ class _ChapterPageState extends State<ChapterPage> {
                     style: TextStyle(fontSize: 18, color: Colors.white60),
                   ),
                 ),
-                SizedBox(height: 50)
+                SizedBox(height: 48)
               ],
             ),
           ),
         ),
-        body: Container(
-          decoration: BoxDecoration(
-              image: DecorationImage(
-                  image: AssetImage("assets/images/papyrus.jpeg"),
-                  fit: BoxFit.fill)),
-          child: (isLoading
-              ? Center(
-                  child: SizedBox(
-                    child: CircularProgressIndicator(
-                      color: Colors.red,
-                      strokeWidth: 5,
+        body: SafeArea(
+          bottom: false,
+          child: Container(
+            decoration: BoxDecoration(
+                image: DecorationImage(
+                    image: AssetImage("assets/images/papyrus.jpeg"),
+                    fit: BoxFit.fill)),
+            child: (isLoading
+                ? Center(
+                    child: SizedBox(
+                      child: CircularProgressIndicator(
+                        color: Colors.red,
+                        strokeWidth: 5,
+                      ),
+                      height: 40,
+                      width: 40,
                     ),
-                    height: 40,
-                    width: 40,
-                  ),
-                )
-              :
-              (hasError ? Center(
-                      child: Expanded(
-                        child: Padding(
-                          padding: EdgeInsets.all(16),
-                          child: GestureDetector(
-                            onTap: () {
-                              setState(() {});
-                            },
-                            child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Image.asset("assets/images/load-error.png"),
-                                  SizedBox(height: 16),
-                                  SizedBox(
-                                    width: 240,
-                                    child: Text(
-                                      GeneralStrings.errorMessage,
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.black87,
+                  )
+                :
+                (hasError ? Center(
+                        child: Expanded(
+                          child: Padding(
+                            padding: EdgeInsets.all(16),
+                            child: GestureDetector(
+                              onTap: () {
+                                setState(() {});
+                              },
+                              child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Image.asset("assets/images/load-error.png"),
+                                    SizedBox(height: 16),
+                                    SizedBox(
+                                      width: 240,
+                                      child: Text(
+                                        GeneralStrings.errorMessage,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          color: Colors.black87,
+                                        ),
                                       ),
-                                    ),
-                                  )
-                                ]),
+                                    )
+                                  ]),
+                            ),
                           ),
                         ),
-                      ),
-                    )
-                  : Center(
-                      child: Column(children: [
-                      Padding(
-                          padding: const EdgeInsets.only(top: 30, bottom: 5, left: 30, right: 30),
-                          child: Column(
-                            children: [
-                              Text(chapter?.title ?? "",
-                                  style: TextStyle(
-                                      fontSize: 26,
-                                      color: Colors.black,
-                                      fontStyle: FontStyle.italic,
-                                      fontWeight: FontWeight.bold)),
-                              SizedBox(height: 10),
-                              isMarked
-                                  ? Image.asset(
-                                      "assets/images/bookmark.png",
-                                      height: 20,
-                                    )
-                                  : SizedBox(),
-                            ],
-                          )),
-                      Expanded(
-                        child: Padding(
-                            padding: const EdgeInsets.only(
-                                left: 15, right: 15, bottom: 15),
-                            child: Scrollbar(
-                              isAlwaysShown: true,
-                              child: Padding(
-                                padding: const EdgeInsets.all(10),
-                                child: ListView.builder(
-                                  padding: EdgeInsets.only(top: 10),
-                                  itemCount: chapter?.paragraphs.length ?? 0,
-                                  itemBuilder: (BuildContext ctxt, int index) {
-                                    return Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            getParagraph(index),
-                                            style: TextStyle(
-                                              fontSize: 18,
-                                              color: Colors.black87,
-                                              fontStyle: FontStyle.italic,
-                                            ),
-                                          ),
-                                          SizedBox(height: 50)
-                                        ]);
-                                  },
-                                ),
-                              ),
-                            )),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            left: 20, right: 20, bottom: 40),
-                        child: Row(
-                          children: [
-                            Builder(
-                              builder: (context) {
-                                return (hasPrevious()
-                                    ? Expanded(
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            presentPrevious(context);
-                                          },
-                                          child: Text(
-                                            "< Anterior",
-                                            style: TextStyle(
-                                                fontSize: 18,
-                                                color: Colors.black,
-                                                fontStyle: FontStyle.italic,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ),
+                      )
+                    : Center(
+                        child: Column(children: [
+                        Padding(
+                            padding: const EdgeInsets.only(top: 30, left: 30, right: 30),
+                            child: Column(
+                              children: [
+                                Text(chapter?.title ?? "",
+                                    style: TextStyle(
+                                        fontSize: 26,
+                                        color: Colors.black,
+                                        fontStyle: FontStyle.italic,
+                                        fontWeight: FontWeight.bold)),
+                                SizedBox(height: 10),
+                                isMarked
+                                    ? Image.asset(
+                                        "assets/images/bookmark.png",
+                                        height: 20,
                                       )
-                                    : Expanded(child: Text("")));
-                              },
-                            ),
-                            Expanded(child:
-                              GestureDetector(
-                                onTap: _launchURL,
-                                child: Image.asset(
-                                  "assets/images/yt-icon.png",
-                                  height: 40,
+                                    : SizedBox(),
+                              ],
+                            )),
+                        Expanded(
+                          child: Padding(
+                              padding: const EdgeInsets.only(left: 15, right: 15),
+                              child: Scrollbar(
+                                isAlwaysShown: true,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
+                                  child: ListView.builder(
+                                    padding: EdgeInsets.only(top: 10),
+                                    itemCount: chapter?.paragraphs.length ?? 0,
+                                    itemBuilder: (BuildContext ctxt, int index) {
+                                      return Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              getParagraph(index),
+                                              style: TextStyle(
+                                                fontSize: 18,
+                                                color: Colors.black87,
+                                                fontStyle: FontStyle.italic,
+                                              ),
+                                            ),
+                                            SizedBox(height: 24)
+                                          ]
+                                      );
+                                    },
+                                  ),
                                 ),
                               )),
-                            Builder(
-                              builder: (context) {
-                                return (hasNext()
-                                    ? Expanded(
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            presentNext(context);
-                                          },
-                                          child: Text(
-                                            "Próximo >",
-                                            textAlign: TextAlign.end,
-                                            style: TextStyle(
-                                                fontSize: 18,
-                                                color: Colors.black,
-                                                fontStyle: FontStyle.italic,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ),
-                                      )
-                                    : Expanded(child: Text("")));
-                              },
-                            ),
-                          ],
                         ),
-                      )
-                    ])
+                        Container(
+                          color: Color.fromRGBO(0, 0, 0, 0.4),
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 8, left: 20, right: 20, bottom: 32),
+                            child:
+                            Row(
+                              children: [
+                                Builder(
+                                  builder: (context) {
+                                    return (hasPrevious()
+                                        ? Expanded(
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                presentPrevious(context);
+                                              },
+                                              child: Text(
+                                                "< Anterior",
+                                                style: TextStyle(
+                                                    fontSize: 18,
+                                                    color: Colors.white70,
+                                                    fontStyle: FontStyle.italic,
+                                                    fontWeight: FontWeight.bold),
+                                              ),
+                                            ),
+                                          )
+                                        : Expanded(child: Text("")));
+                                  },
+                                ),
+                                Expanded(child:
+                                  GestureDetector(
+                                    onTap: _launchURL,
+                                    child: Image.asset(
+                                      "assets/images/yt-icon.png",
+                                      height: 40,
+                                    ),
+                                  )),
+                                Builder(
+                                  builder: (context) {
+                                    return (hasNext()
+                                        ? Expanded(
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                presentNext(context);
+                                              },
+                                              child: Text(
+                                                "Próximo >",
+                                                textAlign: TextAlign.end,
+                                                style: TextStyle(
+                                                    fontSize: 18,
+                                                    color: Colors.white70,
+                                                    fontStyle: FontStyle.italic,
+                                                    fontWeight: FontWeight.bold),
+                                              ),
+                                            ),
+                                          )
+                                        : Expanded(child: Text("")));
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      ])
+              )
             )
-          )
-        ),
-      )
+          ),
+          ),
+        )
     );
   }
 }

@@ -164,7 +164,6 @@ class _ActPageState extends State<ActPage> {
                                       style: TextStyle(
                                         fontSize: 20,
                                         color: Colors.black87,
-                                        decoration: TextDecoration.underline,
                                         fontStyle: FontStyle.italic,
                                         fontWeight: FontWeight.bold
                                       ),

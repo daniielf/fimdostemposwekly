@@ -91,7 +91,6 @@ class _ArcListPageState extends State<ArcListPage> {
                                                   fontSize: 24,
                                                   color: Colors.black87,
                                                   fontStyle: FontStyle.italic,
-                                                  decoration: TextDecoration.underline,
                                                   fontWeight: FontWeight.bold,
                                                   decorationStyle: TextDecorationStyle.solid
                                               ),
