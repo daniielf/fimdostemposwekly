@@ -29,13 +29,16 @@ class ChapterPage extends StatefulWidget {
 }
 
 class _ChapterPageState extends State<ChapterPage> {
+
   bool isMarked = false;
+  bool isLoading = true;
+  bool hasError = false;
   String reportInput = "";
   Chapter? chapter;
 
   @override
   void initState() {
-    loadMarkedPage();
+    loadChapter();
     super.initState();
   }
 
@@ -192,6 +195,23 @@ class _ChapterPageState extends State<ChapterPage> {
         });
   }
 
+  void loadChapter() async {
+    FirebaseManager.getChapter(widget.arcIndex, widget.chapterIndex)
+        .then((chapter) {
+      setState(() {
+        isLoading = false;
+        hasError = false;
+        loadMarkedPage();
+        this.chapter = chapter;
+      });
+    }).catchError((_) {
+      setState(() {
+        isLoading = false;
+        hasError = true;
+      });
+    }).whenComplete(() => isLoading = false);
+  }
+
   void presentChapter(int chapterIndex, BuildContext ctx) {
     PageRouteBuilder nextRoute = PageRouteBuilder(
       transitionDuration: Duration(milliseconds: 350),
@@ -270,7 +290,8 @@ class _ChapterPageState extends State<ChapterPage> {
                         padding: EdgeInsets.only(top: 10, left: 20, right: 10),
                         child: GestureDetector(
                           onTap: () {
-                            ShareManager.share(widget.arcIndex, widget.chapterIndex, chapter?.title ?? "");
+                            ShareManager.share(widget.arcIndex,
+                                widget.chapterIndex, chapter?.title ?? "");
                           },
                           child: Row(children: [
                             Image.asset(
@@ -281,7 +302,7 @@ class _ChapterPageState extends State<ChapterPage> {
                             Text(
                               "Compartilhar",
                               style:
-                              TextStyle(fontSize: 20, color: Colors.white),
+                                  TextStyle(fontSize: 20, color: Colors.white),
                             ),
                           ]),
                         ),
@@ -336,179 +357,166 @@ class _ChapterPageState extends State<ChapterPage> {
               image: DecorationImage(
                   image: AssetImage("assets/images/papyrus.jpeg"),
                   fit: BoxFit.fill)),
-          child: FutureBuilder<Chapter>(
-              future: FirebaseManager.getChapter(
-                  widget.arcIndex, widget.chapterIndex),
-              builder: (BuildContext ctx, AsyncSnapshot<Chapter> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(
-                    child: SizedBox(
-                      child: CircularProgressIndicator(
-                        color: Colors.red,
-                        strokeWidth: 5,
-                      ),
-                      height: 40,
-                      width: 40,
+          child: (isLoading
+              ? Center(
+                  child: SizedBox(
+                    child: CircularProgressIndicator(
+                      color: Colors.red,
+                      strokeWidth: 5,
                     ),
-                  );
-                }
-
-                if (snapshot.error != null) {
-                  return Center(
-                    child: Expanded(
-                      child: Padding(
-                        padding: EdgeInsets.all(16),
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() {});
-                          },
-                          child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Image.asset("assets/images/load-error.png"),
-                                SizedBox(height: 16),
-                                SizedBox(
-                                  width: 240,
-                                  child: Text(
-                                    GeneralStrings.errorMessage,
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.black87,
+                    height: 40,
+                    width: 40,
+                  ),
+                )
+              :
+              (hasError ? Center(
+                      child: Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.all(16),
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {});
+                            },
+                            child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Image.asset("assets/images/load-error.png"),
+                                  SizedBox(height: 16),
+                                  SizedBox(
+                                    width: 240,
+                                    child: Text(
+                                      GeneralStrings.errorMessage,
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.black87,
+                                      ),
                                     ),
-                                  ),
-                                )
-                              ]),
+                                  )
+                                ]),
+                          ),
                         ),
                       ),
-                    ),
-                  );
-                }
-
-                if (snapshot.connectionState != ConnectionState.done)
-                  return SizedBox();
-
-                var chapter = snapshot.data;
-                this.chapter = chapter;
-
-                return Center(
-                    child: Column(children: [
-                  Padding(
-                      padding: const EdgeInsets.only(
-                          top: 30, bottom: 5, left: 30, right: 30),
-                      child: Column(
-                        children: [
-                          Text(chapter?.title ?? "",
-                              style: TextStyle(
-                                  fontSize: 26,
-                                  color: Colors.black,
-                                  fontStyle: FontStyle.italic,
-                                  fontWeight: FontWeight.bold)),
-                          SizedBox(height: 10),
-                          isMarked
-                              ? Image.asset(
-                                  "assets/images/bookmark.png",
-                                  height: 20,
-                                )
-                              : SizedBox(),
-                        ],
-                      )),
-                  Expanded(
-                    child: Padding(
+                    )
+                  : Center(
+                      child: Column(children: [
+                      Padding(
+                          padding: const EdgeInsets.only(top: 30, bottom: 5, left: 30, right: 30),
+                          child: Column(
+                            children: [
+                              Text(chapter?.title ?? "",
+                                  style: TextStyle(
+                                      fontSize: 26,
+                                      color: Colors.black,
+                                      fontStyle: FontStyle.italic,
+                                      fontWeight: FontWeight.bold)),
+                              SizedBox(height: 10),
+                              isMarked
+                                  ? Image.asset(
+                                      "assets/images/bookmark.png",
+                                      height: 20,
+                                    )
+                                  : SizedBox(),
+                            ],
+                          )),
+                      Expanded(
+                        child: Padding(
+                            padding: const EdgeInsets.only(
+                                left: 15, right: 15, bottom: 15),
+                            child: Scrollbar(
+                              isAlwaysShown: true,
+                              child: Padding(
+                                padding: const EdgeInsets.all(10),
+                                child: ListView.builder(
+                                  padding: EdgeInsets.only(top: 10),
+                                  itemCount: chapter?.paragraphs.length ?? 0,
+                                  itemBuilder: (BuildContext ctxt, int index) {
+                                    return Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            getParagraph(index),
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              color: Colors.black87,
+                                              fontStyle: FontStyle.italic,
+                                            ),
+                                          ),
+                                          SizedBox(height: 50)
+                                        ]);
+                                  },
+                                ),
+                              ),
+                            )),
+                      ),
+                      Padding(
                         padding: const EdgeInsets.only(
-                            left: 15, right: 15, bottom: 15),
-                        child: Scrollbar(
-                          isAlwaysShown: true,
-                          child: Padding(
-                            padding: const EdgeInsets.all(10),
-                            child: ListView.builder(
-                              padding: EdgeInsets.only(top: 10),
-                              itemCount: chapter?.paragraphs.length ?? 0,
-                              itemBuilder: (BuildContext ctxt, int index) {
-                                return Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        getParagraph(index),
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          color: Colors.black87,
-                                          fontStyle: FontStyle.italic,
+                            left: 20, right: 20, bottom: 40),
+                        child: Row(
+                          children: [
+                            Builder(
+                              builder: (context) {
+                                return (hasPrevious()
+                                    ? Expanded(
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            presentPrevious(context);
+                                          },
+                                          child: Text(
+                                            "< Anterior",
+                                            style: TextStyle(
+                                                fontSize: 18,
+                                                color: Colors.black,
+                                                fontStyle: FontStyle.italic,
+                                                fontWeight: FontWeight.bold),
+                                          ),
                                         ),
-                                      ),
-                                      SizedBox(height: 50)
-                                    ]);
+                                      )
+                                    : Expanded(child: Text("")));
                               },
                             ),
-                          ),
-                        )),
-                  ),
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(left: 20, right: 20, bottom: 40),
-                    child: Row(
-                      children: [
-                        Builder(
-                          builder: (context) {
-                            return (hasPrevious()
-                                ? Expanded(
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        presentPrevious(context);
-                                      },
-                                      child: Text(
-                                        "< Anterior",
-                                        style: TextStyle(
-                                            fontSize: 18,
-                                            color: Colors.black,
-                                            fontStyle: FontStyle.italic,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                  )
-                                : Expanded(child: Text("")));
-                          },
+                            Expanded(child:
+                              GestureDetector(
+                                onTap: _launchURL,
+                                child: Image.asset(
+                                  "assets/images/yt-icon.png",
+                                  height: 40,
+                                ),
+                              )),
+                            Builder(
+                              builder: (context) {
+                                return (hasNext()
+                                    ? Expanded(
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            presentNext(context);
+                                          },
+                                          child: Text(
+                                            "Próximo >",
+                                            textAlign: TextAlign.end,
+                                            style: TextStyle(
+                                                fontSize: 18,
+                                                color: Colors.black,
+                                                fontStyle: FontStyle.italic,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                      )
+                                    : Expanded(child: Text("")));
+                              },
+                            ),
+                          ],
                         ),
-                        Expanded(
-                            child: snapshot.error == null
-                                ? GestureDetector(
-                                    onTap: _launchURL,
-                                    child: Image.asset(
-                                      "assets/images/yt-icon.png",
-                                      height: 40,
-                                    ),
-                                  )
-                                : SizedBox()),
-                        Builder(
-                          builder: (context) {
-                            return (hasNext()
-                                ? Expanded(
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        presentNext(context);
-                                      },
-                                      child: Text(
-                                        "Próximo >",
-                                        textAlign: TextAlign.end,
-                                        style: TextStyle(
-                                            fontSize: 18,
-                                            color: Colors.black,
-                                            fontStyle: FontStyle.italic,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                  )
-                                : Expanded(child: Text("")));
-                          },
-                        ),
-                      ],
-                    ),
-                  )
-                ]));
-              }),
-        ));
+                      )
+                    ])
+            )
+          )
+        ),
+      )
+    );
   }
 }
